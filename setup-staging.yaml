@@ -1,0 +1,8 @@
+---
+- hosts: staging
+  roles:
+  - common
+  - setup-server-general
+  - setup-install-nodejs-gulp
+  - setup-install-python-mysqldb
+  

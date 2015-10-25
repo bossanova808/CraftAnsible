@@ -1,0 +1,30 @@
+---
+
+# Set Release Folder
+- include: ../../common/tasks/setup_release_folders.yaml folder=git-deploy
+
+# Get any new tags - needed if we're deploying a specific tagged release
+# use of removes here is a hack - it is meant to result in this only running if the git repo exists already
+# i.e. we're faking that this command removes this, so it thinks it hasn't run.
+- name: "Check for any new tags"
+  command: git fetch --tags chdir={{ release_folder }} removes={{ release_folder }}/git-deploy/.git
+  ignore_errors: yes
+
+# ... and get the latest git release from the specified build branch (e.g., develop/master)
+# we force=yes here so that it will remove any generated files (e.g. node built files) and reset repo
+- name: "Pull latest from git"
+  git: repo={{ build_repo_src }} dest={{ release_folder }} version={{ git_version }} accept_hostkey=yes force=yes update="yes"
+
+
+# COMPILE JS/CSS FROM SRC
+#########################
+
+# Update node packages
+- name: "Update node packages"
+  npm: path={{ release_folder }} state=latest
+
+# Compile with gulp.
+- name: "Compile the release with Gulp"
+  command: gulp build chdir={{ release_folder }}
+
+

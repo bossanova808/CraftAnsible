@@ -1,0 +1,15 @@
+
+# Record folders for later use
+- name: Register release folder
+  set_fact:
+    release_folder: "{{ app_dir }}/releases/{{ folder }}"
+- name: Register release craft folder
+  set_fact:    
+    release_craft_folder: "{{ release_folder }}/craft"
+- name: Register release public folder
+  set_fact: 
+    release_public_folder: "{{ release_folder }}/public_html"
+
+# Create release directory
+- name: Create release directory
+  file: path={{ release_folder }} state=directory

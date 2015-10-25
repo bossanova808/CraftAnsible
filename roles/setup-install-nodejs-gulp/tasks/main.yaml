@@ -1,0 +1,62 @@
+---
+
+- name: Ensure Ubuntu Distro is Supported
+  get_url:
+    url='https://deb.nodesource.com/node/dists/{{ ansible_distribution_release }}/Release'
+    dest=/dev/null
+  register: distrosupported
+
+- name: Remove Old Chris Lea PPA
+  apt_repository:
+    repo='ppa:chris-lea/node.js'
+    state=absent
+  when: distrosupported|success
+  become: yes
+  become_user: root
+
+- name: Remove Old Chris Lea Sources
+  file:
+    path='/etc/apt/sources.list.d/chris-lea-node_js-{{ ansible_distribution_release }}.list'
+    state=absent
+  when: distrosupported|success
+  become: yes
+  become_user: root
+
+- name: Add Nodesource Keys
+  apt_key:
+    url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+  become: yes
+  become_user: root
+    state=present
+
+- name: Add Nodesource Apt Sources List Deb
+  apt_repository:
+    repo='deb https://deb.nodesource.com/node {{ ansible_distribution_release }} main'
+    state=present
+  when: distrosupported|success
+  become: yes
+  become_user: root
+
+- name: Add Nodesource Apt Sources List Deb Src
+  apt_repository:
+    repo='deb-src https://deb.nodesource.com/node {{ ansible_distribution_release }} main'
+    state=present
+  when: distrosupported|success
+  become: yes
+  become_user: root
+
+- name: Install NodeJS
+  apt: pkg=nodejs state=latest
+  when: distrosupported|success
+  become: yes
+  become_user: root
+
+- name: Install Gulp package
+  npm: >
+   name=gulp
+   state=present
+   global=yes
+   version=latest
+  tags: gulp
+  become: yes
+  become_user: root

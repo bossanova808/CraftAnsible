@@ -1,0 +1,9 @@
+# TIDY UP
+#########
+
+# NOT YET IMPLEMENTED
+
+# Delete all but the newest x releases as set by releases_to_keep variable
+#- name: "Deleting old releases"
+#  shell: ls -1dt {{ app_dir }}/releases/* | tail -n +$(({{ releases_to_keep }} + 1)) | xargs rm -rf
+

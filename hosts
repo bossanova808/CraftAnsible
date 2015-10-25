@@ -1,0 +1,9 @@
+[staging]
+staging.projectname.com.au
+[staging:vars]
+ansible_ssh_user=serverpilot
+
+[production]
+projectname.com.au 
+[production:vars]
+ansible_ssh_user=serverpilot

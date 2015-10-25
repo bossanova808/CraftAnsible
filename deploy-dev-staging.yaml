@@ -1,0 +1,14 @@
+---
+- hosts: staging
+
+  vars:
+    deploy_local_db: "true"
+    import_db: "true"
+
+  roles:
+    - common
+    - deploy-dev
+    - push-local-db
+    - release
+    - clean-up
+

@@ -1,0 +1,7 @@
+
+- name: Dump current DB to craft.sql
+  local_action: mysql_db state=dump name=craft target=../dbdump/craft.sql
+
+- name: Push DB to server
+  synchronize: mode=push src=../dbdump/craft.sql dest={{ release_folder }}
+
