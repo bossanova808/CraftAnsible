@@ -26,7 +26,7 @@
 # COPY THE RELEASE ACROSS
 #########################
 
-# rsync release to server. Can exclude directories at this point if that's simpler than deleting from tmp firs. 
+# rsync release to server. Can exclude directories at this point if that's simpler than deleting from tmp dirs. 
 - name: Push release to server
   synchronize: mode=push src=.tmp/{{ timestamp.stdout }} dest={{ app_dir }}/releases rsync_opts=--exclude=.git
 

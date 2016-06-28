@@ -1,0 +1,16 @@
+---
+- hosts: "{{ host }}"
+
+  vars:
+    deploy_local_db: "false"
+    import_db: "false"
+    # Git
+    build_branch: "master"
+    git_version: "HEAD"
+
+  roles:
+    - ../roles/common
+    - ../roles/deploy-git
+    - ../roles/release
+    - ../roles/clean-up
+    

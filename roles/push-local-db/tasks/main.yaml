@@ -1,7 +1,21 @@
+# Set Release Folder - we just use 'dev' for this unofficial approach...
+- include: ../../common/tasks/setup_release_folders.yaml folder=dev
 
-- name: Dump current DB to craft.sql
-  local_action: mysql_db state=dump name=craft target=../dbdump/craft.sql
+- name: Dump current DB to craft-dev.sql
+  local_action: mysql_db state=dump name=craft target=../dbdump/craft-dev.sql
 
 - name: Push DB to server
-  synchronize: mode=push src=../dbdump/craft.sql dest={{ release_folder }}
+  synchronize: mode=push src=../../dbdump/craft-dev.sql dest={{ release_folder }}
 
+# Optionally import the DB automatically 
+# two different methods depending on whether it's coming from a quick and dirty deploy-local
+# or a proper timestamp/git release
+# On Production we probably won't do this...
+
+- name: "Import database on server"
+  mysql_db: name=craft_whatever state=import target="{{ release_folder }}/craft-dev.sql"
+  when: deploy_local_db is defined and import_db is defined
+
+# - name: "Import database on server (db from git repo)"
+#   mysql_db: name=craft_whatever state=import target="{{ release_folder }}/dbdump/craft.sql"
+#   when: deploy_repo_db is defined and import_db is defined

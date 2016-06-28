@@ -1,0 +1,4 @@
+---
+- hosts: "{{ host }}"
+  roles:
+  - ../roles/pull-production-db

@@ -1,9 +1,19 @@
+# Cloudflare only sends http traffic so have to use IP address for servers behind that
+
+#[dev]
+#localhost
+#[dev:vars]
+#ansible_ssh_user=jd
+#easy_name=dev
+
 [staging]
-staging.projectname.com.au
+XXX.XXX.XXX.XXX
 [staging:vars]
 ansible_ssh_user=serverpilot
+easy_name=staging
 
 [production]
-projectname.com.au 
+XXX.XXX.XXX.XXX
 [production:vars]
 ansible_ssh_user=serverpilot
+easy_name=production

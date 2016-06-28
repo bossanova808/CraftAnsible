@@ -1,43 +1,29 @@
-
-
-# Optionally import the DB automatically 
-# two different methods depending on whether it's coming from a quick and dirty deploy-local
-# or a proper timestamp/git release
-# On Production we probably won't do this...
-
-- name: "Import database on server"
-  mysql_db: name=craft_projectname state=import target="{{ release_folder }}/craft.sql"
-  when: deploy_local_db is defined and import_db is defined
-
-# - name: "Import database on server (db from git repo)"
-#   mysql_db: name=craft_projectname state=import target="{{ release_folder }}/dbdump/craft.sql"
-#   when: deploy_repo_db is defined and import_db is defined
-
 # Set folder permissions
-- name: "Set Craft folder permissions"
+- name: "Set Craft app folder permissions"
   file: path="{{ release_craft_folder }}/app" mode=0744
+- name: "Set Craft config folder permissions"  
   file: path="{{ release_craft_folder }}/config" mode=0744
+- name: "Set Craft storage folder permissions"  
   file: path="{{ release_craft_folder }}/storage" mode=0744
 
 
 # CONFIGURE THE NEW PUBLIC FOLDER
 #############################
 
-# Upload .htaccess
-- name: Copy .htaccess-staging
-  copy: src=htaccess/htaccess-staging dest={{ release_public_folder }}
+# Upload our custom .conf we use instead of .htaccess
+- name: Copy z_appname.conf
+  copy: src=conf/z_appname-{{easy_name}}.conf dest=/etc/apache-sp/vhosts.d/appname.d/
+  become: yes
+  become_user: root
 
-# Symlink .htaccess to the uploaded file
-- name: Link .htaccess to .htaccess-staging 
-  file: src={{release_public_folder }}/htaccess-staging dest={{ release_public_folder }}/.htaccess state=link
-
+# @TODO - stop this happening when host is production, as not needed
 # Upload .htpasswd
-- name: Copy htpasswd-staging
-  copy: src=credentials/htpasswd-staging dest={{ release_public_folder }}
+- name: Copy htpasswd
+  copy: src=credentials/htpasswd-{{easy_name}} dest={{ release_public_folder }}
 
 # Symlink .htpasswd to the uploaded file
-- name: Link .htpasswd to .htpasswd-staging 
-  file: src={{release_public_folder }}/htpasswd-staging dest={{ release_public_folder }}/.htpasswd state=link
+- name: Link .htpasswd
+  file: src={{release_public_folder }}/htpasswd-{{easy_name}} dest={{ release_public_folder }}/.htpasswd state=link
 
 
 # SWITCH IN THE RELEASE

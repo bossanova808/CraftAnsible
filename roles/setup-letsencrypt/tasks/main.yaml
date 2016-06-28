@@ -1,0 +1,5 @@
+#git clone the script, chmod it, then run it interactively
+- name: Get Serverpilot Let's Encrypt Script & get it ready to run
+  get_url: url=https://raw.githubusercontent.com/lesaff/serverpilot-letsencrypt/master/sple.sh dest=/usr/local/bin/sple.sh mode="a+x"
+  become: yes
+  become_user: root  

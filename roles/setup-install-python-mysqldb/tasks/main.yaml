@@ -16,6 +16,16 @@
   become: yes
   become_user: root
 
+- name: Install PIP
+  apt: pkg=python-pip state=latest
+  become: yes
+  become_user: root
+
+- name: Install PIP setuptools
+  apt: pkg=python-setuptools state=latest
+  become: yes
+  become_user: root
+
 - name: Install libmysqlclient-dev
   apt: pkg=libmysqlclient-dev state=latest
   become: yes

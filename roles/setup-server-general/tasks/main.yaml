@@ -1,6 +1,6 @@
 ---
-# This is a one off preparatory playbook that gets the basics in place before any deployment is done
-# You can run this whenever you like of course.
+# This is basically a one off preparatory playbook that gets the basics in place before any deployment is done
+# (You can run this whenever you like of course).
 
 - name: Update apt cache
   apt: update_cache=yes
@@ -12,44 +12,30 @@
   file: path={{ releases_dir }} state=directory
 
 # Grab staging .my.cnf from the repo and upload it
-- name: Copy .my.cnf-staging
-  copy: src=credentials/my.cnf-staging dest={{ home_dir }}/.my.cnf
+- name: Copy .my.cnf
+  copy: src=credentials/my.cnf-{{easy_name}} dest={{ home_dir }}/.my.cnf
 
 - name: Set up a cron to keep mysql optimised
   cron: name="Mysqlcheck optimise" minute="33" hour="4" job="mysqlcheck -o --all-databases > /dev/null 2>&1"
-
-# Install Amazon AWS CLI python package.
-- name: PIP Install the Amazon AWS Tools
-  pip: name=awscli
-
-# Needed to make bash scripts made on windows (sorry!) unix friendly...
-- name: Install dos2unix because we live in 1976 apparently
-  apt: pkg=dos2unix state=latest
+  become: yes
+  become_user: root
+  
+- name: Copy html5 boilerplate conf
+  copy: src=conf/html5_boilerplate.conf dest=/etc/apache-sp/conf.d/
+  become: yes
+  become_user: root
+  
+- name: Copy mysql.cnf to fix Craft issues with MYSQL 5.7+
+  copy: src=conf/my.cnf dest=/etc/mysql/
   become: yes
   become_user: root
 
-# AWS Setup
-- name: Create AWS config directory
-  file: path={{ home_dir }}/.aws state=directory
-- name: Copy AWS credentials
-  copy: src=credentials/aws-credentials dest={{ home_dir }}/.aws/credentials
-- name: Copy AWS configuration
-  copy: src=config/aws-config dest={{ home_dir }}/.aws/config
+- name: Install optipng
+  apt: pkg=optipng state=latest
+  become: yes
+  become_user: root
 
-# DB Backups
-- name: Create script directory
-  file: path={{ home_dir }}/scripts state=directory
-- name: Create backups directory
-  file: path={{ home_dir }}/backups state=directory
-# Grab backup script
-- name: Copy backup script
-  copy: src=scripts/db-backup-to-s3.sh dest={{ home_dir }}/scripts
-
-- name: Fix windows/unix crlf shite
-  shell: dos2unix {{ home_dir }}/scripts/db-backup-to-s3.sh
-
-- name: Chmod +x db backup script
-  file: path={{ home_dir }}/scripts/db-backup-to-s3.sh mode="a+x"
-- name: Set up an hourly cron for backup
-  cron: name="Backup DB to S3" minute=0 job="/srv/users/serverpilot/scripts/db-backup-to-s3.sh > /dev/null 2>&1"
-
+- name: Install jpegoptim
+  apt: pkg=jpegoptim state=latest
+  become: yes
+  become_user: root  

@@ -1,0 +1,19 @@
+# Restart all the main ServerPilot services just to make sure everything is fresh and all config picked up
+
+- service: name=mysql state=restarted
+  become: yes
+  become_user: root
+
+- service: name=php7.0-fpm-sp state=restarted
+  become: yes
+  become_user: root
+
+- service: name=apache-sp state=restarted
+  become: yes
+  become_user: root
+
+# - service: name=nginx-sp state=restarted
+#   become: yes
+#   become_user: root
+
+- debug: msg="Don't forget to run (on the server, not here!) - let's encrypt (as root) [/usr/local/bin/sple.sh] BEFORE deploying app! (If not already done)."

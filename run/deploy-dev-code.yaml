@@ -1,0 +1,13 @@
+---
+- hosts: "{{ host }}"
+
+  vars:
+    deploy_local_db: "false"
+    import_db: "false"
+
+  roles:
+    - ../roles/common
+    - ../roles/deploy-dev
+    - ../roles/release
+    - ../roles/clean-up
+
