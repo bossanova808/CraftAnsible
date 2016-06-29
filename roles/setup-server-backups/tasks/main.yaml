@@ -1,6 +1,8 @@
 # Install Amazon AWS CLI python package.
 - name: PIP Install the Amazon AWS Tools
   pip: name=awscli
+  become: yes
+  become_user: root  
 
 # Needed to make bash scripts unix friendly...
 - name: Install dos2unix because we live in 1976 apparently
@@ -10,28 +12,49 @@
 
 # AWS Setup
 - name: Create AWS config directory
-  file: path={{ home_dir }}/.aws state=directory
+  file: path=/root/.aws state=directory
+  become: yes
+  become_user: root
+
 - name: Copy AWS credentials
-  copy: src=credentials/aws-credentials dest={{ home_dir }}/.aws/credentials
+  copy: src=credentials/aws-credentials dest=/root/.aws/credentials
+  become: yes
+  become_user: root
+
 - name: Copy AWS configuration
-  copy: src=config/aws-config dest={{ home_dir }}/.aws/config
+  copy: src=config/aws-config dest=/root/.aws/config
+  become: yes
+  become_user: root  
 
 # DB Backups
 - name: Create script directory
-  file: path={{ home_dir }}/scripts state=directory
+  file: path=/root/scripts state=directory
+  become: yes
+  become_user: root  
+
 - name: Create backups directory
-  file: path={{ home_dir }}/backups state=directory
+  file: path=/root/backups state=directory
+  become: yes
+  become_user: root
+
 # Grab backup script
 - name: Copy backup script
-  copy: src=scripts/backup-to-s3.sh dest={{ home_dir }}/scripts
+  copy: src=scripts/backup-to-s3.sh dest=/root/scripts
+  become: yes
+  become_user: root  
 
 - name: Fix windows/unix crlf shite
-  shell: dos2unix {{ home_dir }}/scripts/backup-to-s3.sh
+  shell: dos2unix /root/scripts/backup-to-s3.sh
+  become: yes
+  become_user: root  
 
 - name: Chmod +x db backup script
-  file: path={{ home_dir }}/scripts/backup-to-s3.sh mode="a+x"
+  file: path=/root/scripts/backup-to-s3.sh mode="a+x"
+  become: yes
+  become_user: root
+
 - name: Set up an hourly cron for backup (backups are run as root)
-  cron: name="Backup DB to S3" minute=0 job="/srv/users/serverpilot/scripts/backup-to-s3.sh > /dev/null 2>&1"
+  cron: name="Backup DB to S3" minute=0 job="/root/scripts/backup-to-s3.sh > /dev/null 2>&1"
   become: yes
   become_user: root
 

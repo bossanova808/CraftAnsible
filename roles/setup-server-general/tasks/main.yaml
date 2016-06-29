@@ -39,3 +39,12 @@
   apt: pkg=jpegoptim state=latest
   become: yes
   become_user: root  
+
+- name: Copy .bashrc for user servpilot
+  copy: src=conf/.bashrc dest={{ home_dir }}/.bashrc
+
+- name: Copy .bashrc for user root
+  copy: src=conf/.bashrc dest=/root/.bashrc
+  become: yes
+  become_user: root 
+
