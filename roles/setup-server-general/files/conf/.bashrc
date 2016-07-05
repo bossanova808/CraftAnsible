@@ -97,63 +97,26 @@ fi
 
 # Show dot files grouped
 export LC_ALL="C"
-export editor="emacs"
-export visual="emacs"
-#export PYTHONIOENCODING="utf-8"
-#export LANG="en_US.UTF-8"
-#export LC_ALL="en_AU.UTF-8"
-
-
 alias clr='clear' 
 alias df='df -h'
-alias edit='subl'
-alias sublr='sudo subl'
 alias l='ls -Alh'
-alias dir='dir -achltr --group-directories-first --color=auto'
-alias h='history'
 alias cp='cp -i'
-alias reboot='sudo reboot'
 alias ping='ping -c 4'
-alias ssp='sudo ss -nplut | grep'
-alias ufws='sudo ufw status verbose'
-alias shutdown='sudo shutdown -P now'
-alias update='sudo apt-get update'
-alias upgrade='sudo apt-get upgrade'
-alias install='sudo apt-get install'
-alias ports='sudo netstat -tulanp'
 alias mem='free -h'
 alias ps='ps aux | grep'
 alias psa='ps aux'
 alias composer='/usr/local/bin/composer.phar'
 alias top='glances'
-alias squeeze='sudo service logitechmediaserver restart'
-alias em='emacs'
-
-alias prodwarm='wget --quiet https://prod:gamut@production.imagescience.com.au/sitemap.xml --output-document - | egrep -o "https://production\.imagescience\.com\.au[^<]+" | wget -i - --wait 2 --spider --user=prod --password=gamut'
-
-#Git shorteners
-alias gu='git add -u :/'
-alias ga='git add -A'
-alias gs='git status -s'
-alias gsv='git status'
-alias gc='git commit'
-alias gp='git push origin'
-alias gpt='git push origin --tags'
-alias gpom='git pull origin master'
-
+alias cdle="cd /etc/letsencrypt"
+alias cdlog="cd /var/log"
+alias cdng="cd /etc/nginx-sp/vhosts.d/"
+alias cdap="cd /etc/apache-sp/"
 
 #ENVIRONMENT SPECIFIC
-
 if [ "$HOSTNAME" = staging ]; then
-    alias cdle="cd /etc/letsencrypt"
-    alias cdlog="cd /var/log"
-    alias cdng="cd /etc/nginx-sp/vhosts.d/"
-    alias cdap="cd /etc/apache-sp/"
+
 fi
 
 if [ "$HOSTNAME" = production ]; then
-    alias cdle="cd /etc/letsencrypt"
-    alias cdlog="cd /var/log"
-    alias cdng="cd /etc/nginx-sp/vhosts.d/"
-    alias cdap="cd /etc/apache-sp/"
+
 fi

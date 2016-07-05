@@ -290,25 +290,46 @@ If we want to instead deploy a specific git version, we would change that second
    
 ### Doing a hotfix with live production data
 
-This: 
+For example, with an ecommerce site, for a quick fix it's usually better to just have a little downtime but be completely sure about state of data, so we take it offline, do a quick fix, and then push the fix and any db changes back up to the production server before making it accesible again:
+
+In full this:
 
 * Triggers maintenance mode 
   (n.b. this requires a console command plugin I wrote to do this)
 * Pulls the latest production DB to your local dev
 * (You then make changes and test, before tagging and committing)
-* Optional -> Push the potentially updated DB back to production
+* (Optional) -> Push the potentially updated DB back to production
 * Deploy the updated code from git
 * Disables maintenance mode on the live server
 
 And here's the actual process:
 
+    git checkout -b hotfix-whatever
     ./production.sh run/maintenance-enable.yaml
     ./production.sh run/pull-db.yaml
 
-    (you work locally, test, then commit to git and tag a release - we push the dev db which is now the production db plus any changes you may have just made...)
+* Work locally
+* Test!
+* Git merge in your fix & tag a release, something like:
+
+    git commit -m "Fixed bug whatever"
+    git checkout master
+    git merge hotfix master
+    git push origin master
+    git tag -a v1.4.1 -m "Merged hotfix for..."
+    git push origin --tags
+    git branch -d hotfix-whatever
+
+Push the dev db which is now the production db plus the local changes
 
     ./production.sh run/deploy-dev-db
+
+Push the tagged git version to production:
+
     ./production.sh run/deploy-git --git_version="V1.4.1"
+
+Disable maintenance mode and make it all live again:
+
     ./production.sh run/maintenance-disable.yaml
 
 
