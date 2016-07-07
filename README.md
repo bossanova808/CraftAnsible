@@ -305,12 +305,12 @@ In full this:
 And here's the actual process:
 
     git checkout -b hotfix-whatever
-    ./production.sh run/maintenance-enable.yaml
     ./production.sh run/pull-db.yaml
+    ./production.sh run/maintenance-enable.yaml
 
-* Work locally
-* Test!
-* Git merge in your fix & tag a release, something like:
+... Work locally & **Test!**
+
+Them, git merge in your fix & tag a release, something like:
 
     git commit -m "Fixed bug whatever"
     git checkout master
@@ -320,17 +320,18 @@ And here's the actual process:
     git push origin --tags
     git branch -d hotfix-whatever
 
-Push the dev db which is now the production db plus the local changes
-
-    ./production.sh run/deploy-dev-db
-
 Push the tagged git version to production:
 
     ./production.sh run/deploy-git --git_version="V1.4.1"
 
-Disable maintenance mode and make it all live again:
+Push the dev db which is now the production db plus the local changes
 
-    ./production.sh run/maintenance-disable.yaml
+    ./production.sh run/deploy-dev-db
+
+(...this will aslo take your site out of maintenance mode since you pulled the DB just before enabling maintenance mode)
+
+
+
 
 
    
