@@ -15,15 +15,25 @@
   copy: src=conf/z_appname-{{easy_name}}.conf dest=/etc/apache-sp/vhosts.d/appname.d/
   become: yes
   become_user: root
+  register: apachesp
 
-# @TODO - stop this happening when host is production, as not needed
+
+# Upload our custom .conf for php
+- name: Copy php_whatever.conf
+  copy: src=conf/php_whatever-{{easy_name}}.conf dest=/etc/php7.0-sp/fpm-pools.d/whatever.d
+  become: yes
+  become_user: root
+  register: phpfpmsp
+
+# Production is no longer behind a password....
 # Upload .htpasswd
 - name: Copy htpasswd
   copy: src=credentials/htpasswd-{{easy_name}} dest={{ release_public_folder }}
-
+  when: "'production' not in group_names"
 # Symlink .htpasswd to the uploaded file
 - name: Link .htpasswd
   file: src={{release_public_folder }}/htpasswd-{{easy_name}} dest={{ release_public_folder }}/.htpasswd state=link
+  when: "'production' not in group_names"
 
 
 # SWITCH IN THE RELEASE

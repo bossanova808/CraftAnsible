@@ -1,0 +1,8 @@
+---
+- hosts: "{{ host }}"
+
+  vars:
+    systemOn: "false"
+
+  roles:
+    - ../roles/production-system-control

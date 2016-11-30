@@ -1,16 +1,15 @@
 # This pulls a hosts remote crat db and imports it locally in to the dev environment
-# As simple as: ./production.sh pull-db.yaml  
+# As simple as: ./production.sh run/pull-db.yaml  
 # Backups up the local db first in case of misadventure.
 
 - name: Dump current local DB backup to craft-dev.sql
-  local_action: mysql_db state=dump name=craft target=../dbdump/craft-dev-before-pull-db.sql
+  local_action: mysql_db state=dump name=craft target=../../dbdump/craft-dev-before-pull-db.sql
 
 - name: Dump remote DB to file on remote server /srv/users/serverpilot/dbdump/craft-remote.sql
   mysql_db: state=dump name=craft_whatever target=/srv/users/serverpilot/dbdump/craft-remote.sql
 
-- name: Pull DB to local dbdump directory
-  synchronize: mode=pull src=/srv/users/serverpilot/dbdump/craft-remote.sql dest=../dbdump/
+- name: Pull remote DB to local dbdump directory
+  synchronize: mode=pull src=/srv/users/serverpilot/dbdump/craft-remote.sql dest=../../dbdump/
 
-# password should really be moved to a var
 - name: Import remote db to local db
-  local_action: mysql_db name=craft state=import login_host="localhost" login_password="whatever" target="../dbdump/craft-remote.sql"
+  local_action: mysql_db name=craft state=import login_host="localhost" login_password="whatever" target="../../dbdump/craft-remote.sql"

@@ -7,10 +7,10 @@
 
 # This is quick and dirty - just rsync up all the compiled code...
 - name: Push current `craft` to server
-  synchronize: mode=push src=../../craft dest={{ release_folder }} rsync_opts="--exclude=.git --exclude=storage/runtime --exclude=storage/backups"
+  synchronize: mode=push delete=yes recursive=yes src=../../craft dest={{ release_folder }} rsync_opts="--exclude=.git --exclude=storage/runtime --exclude=storage/backups" 
 
 - name: Push current `public_html` to server
-  synchronize: mode=push src=../../public_html dest={{ release_folder }} rsync_opts="--exclude=_imager-transforms --exclude=public_html/.well-known"
+  synchronize: mode=push delete=yes recursive=yes src=../../public_html dest={{ release_folder }} rsync_opts="--exclude=_imager-transforms --exclude=public_html/.well-known"
 
 
   

@@ -2,9 +2,12 @@
 - include: ../../common/tasks/setup_release_folders.yaml folder=dev
 
 - name: Dump current DB to craft-dev.sql
-  local_action: mysql_db state=dump name=craft target=../dbdump/craft-dev.sql
+  local_action: mysql_db state=dump name=craft target=../../dbdump/craft-dev.sql
 
-- name: Push DB to server
+- name: Dump remote DB to backup on remote server /srv/users/serverpilot/dbdump/craft-remote-before-push.sql
+  mysql_db: state=dump name=craft_whatever target=/srv/users/serverpilot/dbdump/craft-remote-before-push.sql
+
+- name: Push local DB to remote
   synchronize: mode=push src=../../dbdump/craft-dev.sql dest={{ release_folder }}
 
 # Optionally import the DB automatically 
@@ -12,7 +15,7 @@
 # or a proper timestamp/git release
 # On Production we probably won't do this...
 
-- name: "Import database on server"
+- name: "Import database on remote"
   mysql_db: name=craft_whatever state=import target="{{ release_folder }}/craft-dev.sql"
   when: deploy_local_db is defined and import_db is defined
 

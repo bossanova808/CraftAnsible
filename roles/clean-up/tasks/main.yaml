@@ -5,8 +5,16 @@
 #- name: "Deleting old releases"
 #  shell: ls -1dt {{ app_dir }}/releases/* | tail -n +$(({{ releases_to_keep }} + 1)) | xargs rm -rf
 
-# Restart apache to pick up any .conf changes
-- service: name=apache-sp state=restarted
+# Restart php to pick up any .conf changes
+- name: Restart php7.0-fpm-sp to pick up any .conf changes
+  service: name=php7.0-fpm-sp state=restarted
   become: yes
   become_user: root
+  when: phpfpmsp.changed
 
+# Restart apache to pick up any .conf changes
+- name: Restart apache-sp to pick up any .conf changes
+  service: name=apache-sp state=restarted
+  become: yes
+  become_user: root
+  when: apachesp.changed

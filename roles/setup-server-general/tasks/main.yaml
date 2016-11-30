@@ -11,6 +11,10 @@
 - name: Create releases directory under app
   file: path={{ releases_dir }} state=directory
 
+- name: Create dbdump directory under serverpilot user
+  file: path={{ dbdump_dir }} state=directory
+
+
 # Grab staging .my.cnf from the repo and upload it
 - name: Copy .my.cnf
   copy: src=credentials/my.cnf-{{easy_name}} dest={{ home_dir }}/.my.cnf

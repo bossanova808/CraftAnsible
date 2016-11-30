@@ -10,5 +10,5 @@ craft_dir: "{{ app_dir }}/craft"
 public_dir: "{{ app_dir }}/public"
 # ....that live under here
 releases_dir: "{{ app_dir }}/releases"
-
+dbdump_dir: "{{home_dir}}/dbdump"
 
