@@ -1,8 +1,0 @@
----
-- hosts: "{{ host }}"
-
-  vars:
-    maintenanceEnable: "true"
-
-  roles:
-    - ../roles/production-maintenance-mode

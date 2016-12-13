@@ -1,45 +1,60 @@
 # Install Amazon AWS CLI python package.
 - name: PIP Install the Amazon AWS Tools
-  pip: name=awscli
+  pip: 
+    name: awscli
   become: yes
   become_user: root  
 
 # Needed to make bash scripts unix friendly...
-- name: Install dos2unix because we live in 1976 apparently
-  apt: pkg=dos2unix state=latest
+- name: "Install dos2unix, we live in 1976 apparently"
+  apt: 
+    pkg: dos2unix 
+    state: latest
   become: yes
   become_user: root
 
 # AWS Setup
 - name: Create AWS config directory
-  file: path=/root/.aws state=directory
+  file: 
+    path: /root/.aws 
+    state: directory
   become: yes
   become_user: root
 
 - name: Copy AWS credentials
-  copy: src=credentials/aws-credentials dest=/root/.aws/credentials
+  template: 
+    src: ../files/credentials/aws-credentials 
+    dest: /root/.aws/credentials
   become: yes
   become_user: root
 
 - name: Copy AWS configuration
-  copy: src=config/aws-config dest=/root/.aws/config
+  template: 
+    src: ../files/configuration/aws-config 
+    dest: /root/.aws/config
   become: yes
   become_user: root  
 
 # DB Backups
 - name: Create script directory
-  file: path=/root/scripts state=directory
+  file: 
+    path: /root/scripts 
+    state: directory
   become: yes
   become_user: root  
 
 - name: Create backups directory
-  file: path=/root/backups state=directory
+  file: 
+    path: /root/backups
+    state: directory
   become: yes
   become_user: root
 
 # Grab backup script
 - name: Copy backup script
-  copy: src=scripts/backup-to-s3.sh dest=/root/scripts
+  template: 
+    src: ../files/scripts/backup-to-s3.sh 
+    dest: /root/scripts
   become: yes
   become_user: root  
 
@@ -49,12 +64,17 @@
   become_user: root  
 
 - name: Chmod +x db backup script
-  file: path=/root/scripts/backup-to-s3.sh mode="a+x"
+  file: 
+    path: /root/scripts/backup-to-s3.sh 
+    mode: "a+x"
   become: yes
   become_user: root
 
 - name: Set up an hourly cron for backup (backups are run as root)
-  cron: name="Backup DB to S3" minute=0 job="/root/scripts/backup-to-s3.sh > /dev/null 2>&1"
+  cron: 
+    name: "Backup DB to S3" 
+    minute: 0 
+    job: "/root/scripts/backup-to-s3.sh > /dev/null 2>&1"
   become: yes
   become_user: root
 

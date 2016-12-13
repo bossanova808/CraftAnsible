@@ -1,0 +1,13 @@
+---
+- hosts: "{{ host }}"
+
+  vars:
+    deploy_local_db: "false"
+    import_db: "false"
+    
+  roles:
+    - create-release-folders
+    - deploy-dev
+    - release
+    - clean-up
+

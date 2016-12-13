@@ -1,0 +1,17 @@
+---
+- hosts: "{{ host }}"
+
+  vars:
+    deploy_local_db: "false"
+    import_db: "false"
+    # Git
+    build_branch: "master"
+    git_version: "HEAD"
+    
+  roles:
+    - create-release-folders
+    - deploy-git
+    - gulp-build
+    - release
+    - clean-up
+    

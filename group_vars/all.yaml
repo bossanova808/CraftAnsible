@@ -1,0 +1,36 @@
+---
+
+### VARIABLES THAT APPLY TO ALL HOSTS & YOUR LOCAL ENVIRONMENT LIVE HERE
+
+local_db_server: localhost
+local_db_name: whatever
+local_db_password: whatever
+local_db_dump_dir: "/var/www/vhosts/whatever/dbdump"
+
+# The default user tasks on the server are run as 
+# (n.b. don't use root - ansible will escalate as required and ask for your sudo password when you run plays)
+ansible_user: "serverpilot"
+
+# if deploying from git/timestamp, keep how many old releases?
+releases_to_keep: "3"
+# Git repo for your code, for git deployments of a tag/release
+build_repo_src: "git@bitbucket.org:/whatever/whatever.git"
+# ServerPilot stuff
+sp_appname: "whatever"
+home_dir: "/srv/users/serverpilot"
+app_dir: "/srv/users/serverpilot/apps/{{sp_appname}}"
+
+# These are what get symlinked to the actual release files....
+craft_dir: "{{app_dir}}/craft"
+public_dir: "{{app_dir}}/public"
+
+# ....that live under here
+releases_dir: "{{app_dir}}/releases"
+dbdump_dir: "{{home_dir}}/dbdump"
+
+# (The actual release folders are registered & created as part of the deplo-* roles)
+
+# When deploying dev code, we'll want to exlcude some things (basically what's in our .gitignore)
+# See deploy-dev/tasks/main.yaml - thesse are passed as rsycn options in there
+craft_dir_exculsions: "--exclude=.git --exclude=storage/runtime --exclude=storage/backups"
+public_dir_exclusions: "--exclude=_imager-transforms --exclude=public_html/.well-known"

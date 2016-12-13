@@ -8,17 +8,26 @@
   local_action: command date +%Y%m%d%H%M%S
   register: timestamp
 
-# Set Release Folder
-- include: ../../common/tasks/setup_release_folders.yaml folder={{ timestamp.stdout }}
-
+# Set Release Folder - 'dev' - to indicate this is current development code
+- include: ../../create-release-folders/tasks/create-release-folders.yaml 
+  vars:
+    folder: "{{ timestamp.stdout }}"
 
 # Create a local dir...
 - name: Create .tmp/timestamp directory for release
-  local_action: file state=directory recurse=yes path=.tmp/{{ timestamp.stdout }}
+  local_action: file 
+    state=directory 
+    recurse=yes 
+    path=.tmp/{{ timestamp.stdout }}
 
 # ... and get the latest git release from the specified build branch (e.g., develop/master) - and only latest revision
 - name: "Pull latest from git"
-  local_action: git repo={{ build_repo_src }} dest=.tmp/{{ timestamp.stdout }} version={{ build_branch }} accept_hostkey=yes depth=1
+  local_action: git 
+    repo="{{ build_repo_src }}"
+    dest=".tmp/{{ timestamp.stdout }}"
+    version="{{ build_branch }}"
+    accept_hostkey=yes 
+    depth=1
 
 # Server
 # ======
@@ -28,18 +37,12 @@
 
 # rsync release to server. Can exclude directories at this point if that's simpler than deleting from tmp dirs. 
 - name: Push release to server
-  synchronize: mode=push src=.tmp/{{ timestamp.stdout }} dest={{ app_dir }}/releases rsync_opts=--exclude=.git
+  synchronize: 
+    mode: push 
+    src: ".tmp/{{ timestamp.stdout }}"
+    dest: "{{ app_dir }}/releases"
+    rsync_opts: --exclude=.git
 
 
-# COMPILE JS/CSS FROM SRC
-#########################
-
-# Update node packages
-- name: "Update node packages"
-  npm: path={{ release_folder }} state=latest
-
-# Compile with gulp.
-- name: "Compile the release with Gulp"
-  command: gulp build chdir={{ release_folder }}
 
 

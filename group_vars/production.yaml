@@ -1,0 +1,8 @@
+---
+
+### HOST SPECIFIC VARIABLES HERE
+easy_name: "production"
+db_name: "whatever"
+db_user: "whatever"
+db_password: "whatever"
+db_dump_dir: "/srv/users/serverpilot/dbdump"

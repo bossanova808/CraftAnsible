@@ -1,26 +1,36 @@
-# Set folder permissions
+# Set Craft folder permissions
+
 - name: "Set Craft app folder permissions"
-  file: path="{{ release_craft_folder }}/app" mode=0744
+  file: 
+    path: "{{ release_craft_folder }}/app" 
+    mode: 0744
+
 - name: "Set Craft config folder permissions"  
-  file: path="{{ release_craft_folder }}/config" mode=0744
+  file: 
+    path: "{{ release_craft_folder }}/config" 
+    mode: 0744
+
 - name: "Set Craft storage folder permissions"  
-  file: path="{{ release_craft_folder }}/storage" mode=0744
+  file: 
+    path: "{{ release_craft_folder }}/storage" 
+    mode: 0744
 
+# Server Configuration Changes
 
-# CONFIGURE THE NEW PUBLIC FOLDER
-#############################
-
-# Upload our custom .conf we use instead of .htaccess
-- name: Copy z_appname.conf
-  copy: src=conf/z_appname-{{easy_name}}.conf dest=/etc/apache-sp/vhosts.d/appname.d/
+# Upload our custom .conf for apache
+- name: Copy apache-{{easy_name}}.conf to server & put zzz in front of it to make sure it's the last loaded conf
+  template: 
+    src: "../files/configuration/apache-{{easy_name}}.conf"
+    dest: "/etc/apache-sp/vhosts.d/{{sp_appname}}.d/zzz_apache-{{easy_name}}.conf"
   become: yes
   become_user: root
   register: apachesp
 
-
 # Upload our custom .conf for php
-- name: Copy php_whatever.conf
-  copy: src=conf/php_whatever-{{easy_name}}.conf dest=/etc/php7.0-sp/fpm-pools.d/whatever.d
+- name: Copy php-{{easy_name}}.conf
+  template: 
+    src: "../files/configuration/php-{{easy_name}}.conf"
+    dest: "/etc/php7.0-sp/fpm-pools.d/{{sp_appname}}.d/"
   become: yes
   become_user: root
   register: phpfpmsp
@@ -28,11 +38,16 @@
 # Production is no longer behind a password....
 # Upload .htpasswd
 - name: Copy htpasswd
-  copy: src=credentials/htpasswd-{{easy_name}} dest={{ release_public_folder }}
+  template: 
+    src: ../files/credentials/htpasswd-{{easy_name}} 
+    dest: "{{ release_public_folder }}"
   when: "'production' not in group_names"
 # Symlink .htpasswd to the uploaded file
 - name: Link .htpasswd
-  file: src={{release_public_folder }}/htpasswd-{{easy_name}} dest={{ release_public_folder }}/.htpasswd state=link
+  file: 
+    src: "{{release_public_folder }}/htpasswd-{{easy_name}}"
+    dest: "{{ release_public_folder }}/.htpasswd"
+    state: link
   when: "'production' not in group_names"
 
 
@@ -41,9 +56,16 @@
 
 # Re-point symlinks to this new release
 - name: "Update craft symlink to point to latest release"
-  file: src={{ release_craft_folder }} dest={{ craft_dir }} state=link
+  file: 
+    src: "{{ release_craft_folder }}"
+    dest: "{{ craft_dir }}"
+    state: link
+
 - name: "Update public symlink to point to latest release"  
-  file: src={{ release_public_folder }} dest={{ public_dir }} state=link
+  file: 
+    src: "{{ release_public_folder }}"
+    dest: "{{ public_dir }}"
+    state: link
   
 
 

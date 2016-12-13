@@ -1,14 +1,26 @@
-# Set Release Folder - we just use 'dev' for this unofficial approach...
-- include: ../../common/tasks/setup_release_folders.yaml folder=dev
+
+# Set Release Folder - 'dev' - to indicate this is current development code
+- include: ../../create-release-folders/tasks/create-release-folders.yaml 
+  vars:
+    folder: dev
 
 - name: Dump current DB to craft-dev.sql
-  local_action: mysql_db state=dump name=craft target=../../dbdump/craft-dev.sql
+  local_action: mysql_db 
+    state=dump 
+    name=craft 
+    target="{{ local_db_dump_dir }}/craft-dev.sql"
 
-- name: Dump remote DB to backup on remote server /srv/users/serverpilot/dbdump/craft-remote-before-push.sql
-  mysql_db: state=dump name=craft_whatever target=/srv/users/serverpilot/dbdump/craft-remote-before-push.sql
+- name: "Dump remote DB to backup on remote server {{ db_dump_dir }}/craft-remote-before-push.sql"
+  mysql_db: 
+    state: dump 
+    name: whatever 
+    target: "{{ db_dump_dir }}/craft-remote-before-push.sql"
 
 - name: Push local DB to remote
-  synchronize: mode=push src=../../dbdump/craft-dev.sql dest={{ release_folder }}
+  synchronize: 
+    mode: push 
+    src: "{{ local_db_dump_dir }}/craft-dev.sql"
+    dest: "{{ release_folder }}"
 
 # Optionally import the DB automatically 
 # two different methods depending on whether it's coming from a quick and dirty deploy-local
@@ -16,9 +28,12 @@
 # On Production we probably won't do this...
 
 - name: "Import database on remote"
-  mysql_db: name=craft_whatever state=import target="{{ release_folder }}/craft-dev.sql"
+  mysql_db: 
+    state: import
+    name: "{{ db_name }}"
+    target: "{{ release_folder }}/craft-dev.sql"
   when: deploy_local_db is defined and import_db is defined
 
 # - name: "Import database on server (db from git repo)"
-#   mysql_db: name=craft_whatever state=import target="{{ release_folder }}/dbdump/craft.sql"
+#   mysql_db: name=whatever state=import target="{{ release_folder }}/dbdump/craft.sql"
 #   when: deploy_repo_db is defined and import_db is defined

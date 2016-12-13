@@ -2,37 +2,51 @@
 # Install  what is needed for ansible's mysqldb module, so e.g. we can import out DB on staging automatically
 
 - name: Install gcc
-  apt: pkg=gcc state=latest
+  apt: 
+    pkg: gcc 
+    state: latest
   become: yes
   become_user: root
 
 - name: Install build-essential
-  apt: pkg=build-essential state=latest
+  apt: 
+    pkg: build-essential 
+    state: latest
   become: yes
   become_user: root
 
 - name: Install python-dev
-  apt: pkg=python-dev state=latest
+  apt: 
+    pkg: python-dev 
+    state: latest
   become: yes
   become_user: root
 
 - name: Install PIP
-  apt: pkg=python-pip state=latest
+  apt: 
+    pkg: python-pip 
+    state: latest
   become: yes
   become_user: root
 
 - name: Install PIP setuptools
-  apt: pkg=python-setuptools state=latest
+  apt: 
+    pkg: python-setuptools 
+    state: latest
   become: yes
   become_user: root
 
 - name: Install libmysqlclient-dev
-  apt: pkg=libmysqlclient-dev state=latest
+  apt: 
+    pkg: libmysqlclient-dev 
+    state: latest
   become: yes
   become_user: root
 
 - name: Install python-mysqldb
-  apt: pkg=python-mysqldb state=latest
+  apt: 
+    pkg: python-mysqldb 
+    state: latest
   become: yes
   become_user: root
 

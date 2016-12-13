@@ -1,16 +1,30 @@
 ---
 
-# Quick and Dirty deploy from local files to staging
+# Deploys your current codebase to a server
 
-# Set Release Folder - we just use 'dev' for this unofficial approach...
-- include: ../../common/tasks/setup_release_folders.yaml folder=dev
+# Set Release Folder - 'dev' - to indicate this is current development code
+- include: ../../create-release-folders/tasks/create-release-folders.yaml 
+  vars:
+    folder: dev
 
 # This is quick and dirty - just rsync up all the compiled code...
 - name: Push current `craft` to server
-  synchronize: mode=push delete=yes recursive=yes src=../../craft dest={{ release_folder }} rsync_opts="--exclude=.git --exclude=storage/runtime --exclude=storage/backups" 
+  synchronize: 
+    mode: push 
+    delete: yes 
+    recursive: yes 
+    src: "../../craft"
+    dest: "{{ release_folder }}"
+    rsync_opts: "{{ craft_dir_exculsions }}"
 
 - name: Push current `public_html` to server
-  synchronize: mode=push delete=yes recursive=yes src=../../public_html dest={{ release_folder }} rsync_opts="--exclude=_imager-transforms --exclude=public_html/.well-known"
+  synchronize: 
+    mode: push 
+    delete: yes 
+    recursive: yes 
+    src: "../../public_html"
+    dest: "{{ release_folder }}"
+    rsync_opts: "{{ public_dir_exclusions }}"
 
 
   

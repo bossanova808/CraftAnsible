@@ -1,7 +1,9 @@
 ---
 
-# Set Release Folder
-- include: ../../common/tasks/setup_release_folders.yaml folder=git-deploy
+# Set Release Folder - 'dev' - to indicate this is current development code
+- include: ../../create-release-folders/tasks/create-release-folders.yaml 
+  vars:
+    folder: git-deploy
 
 # Get any new tags - needed if we're deploying a specific tagged release
 # use of removes here is a hack - it is meant to result in this only running if the git repo exists already
@@ -13,24 +15,12 @@
 # ... and get the latest git release from the specified build branch (e.g., develop/master) - and only latest revision
 # we force=yes here so that it will remove any generated files and reset repo
 - name: "Pull latest from git"
-  git: repo={{build_repo_src}} dest={{release_folder }} version={{git_version}} accept_hostkey=yes force=yes update="yes"
-
-
-# COMPILE JS/CSS FROM SRC
-#########################
-
-- name: "Update nodejs to latest"
-  apt: name=nodejs state=latest
-  
-- name: "Update npm to latest"
-  npm: name=npm state=latest global=true
-
-# Update node packages
-- name: "Update node packages"
-  npm: path={{release_folder}} state=latest
-
-# Compile with gulp.
-- name: "Compile the release with Gulp"
-  command: gulp build chdir={{release_folder}}
+  git: 
+    repo: "{{ build_repo_src }}" 
+    dest: "{{release_folder }}" 
+    version: "{{ git_version }}" 
+    accept_hostkey: yes 
+    force: yes 
+    update: yes
 
 

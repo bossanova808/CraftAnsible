@@ -1,0 +1,29 @@
+---
+
+# COMPILE JS/CSS FROM SRC
+#########################
+
+- name: "Update nodejs to latest"
+  apt: 
+    name: nodejs 
+    state: latest
+  
+- name: "Update npm to latest"
+  npm: 
+    name: npm 
+    state: latest 
+    global: true
+  become: yes
+  become_user: root
+  
+# Update node packages
+- name: "Update node packages"
+  npm: 
+    path: "{{ release_folder }}"
+    state: latest
+    production: yes
+
+# Compile with gulp.
+- name: "Compile the release with Gulp"
+  command: /usr/local/bin/gulp production chdir="{{ release_folder }}"
+

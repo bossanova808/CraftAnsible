@@ -1,0 +1,11 @@
+
+
+- command: php yiic-env.php --env="{{sp_appname}}.com.au" businesslogic turnSystemOn 
+  args:
+    chdir: /srv/users/serverpilot/apps/{{sp_appname}}/craft/plugins/businesslogic/consolecommands
+  when: systemOn == "true"
+
+- command: php yiic-env.php --env="{{sp_appname}}.com.au" businesslogic turnSystemOff
+  args:
+    chdir: /srv/users/serverpilot/apps/{{sp_appname}}/craft/plugins/businesslogic/consolecommands
+  when: systemOn == "false"

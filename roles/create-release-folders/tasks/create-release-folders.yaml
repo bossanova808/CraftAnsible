@@ -1,0 +1,26 @@
+---
+# Register ansible facts, for later use
+
+# NB DO NOT BE TEMPTED TO NAME THIS main.yaml - for some reason that leads to underfined 'folder' errors
+#  when including this file. (?!)
+
+- name: "Register ansible fact - release folder"
+  set_fact:
+    release_folder: "{{ app_dir }}/releases/{{ folder }}"
+
+- name: "Register ansible fact - release craft subfolder"
+  set_fact:    
+    release_craft_folder: "{{ release_folder }}/craft"
+
+- name: "Register ansible fact - release public subfolder"
+  set_fact: 
+    release_public_folder: "{{ release_folder }}/public_html"
+
+
+# Actually create the release directory
+
+- name: Create release directory
+  file: 
+    path: "{{ release_folder }}"
+    state: directory
+

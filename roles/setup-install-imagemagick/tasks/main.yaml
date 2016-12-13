@@ -1,0 +1,71 @@
+# Install imagemagick on PHP7 following guide here:
+# https://serverpilot.io/community/articles/how-to-install-the-php-imagemagick-extension.html  
+
+- name: Install gcc
+  apt: 
+    pkg: gcc 
+    state: latest
+  become: yes
+  become_user: root
+
+- name: Install make
+  apt: 
+    pkg: make 
+    state: latest
+  become: yes
+  become_user: root
+
+- name: Install autoconf
+  apt: 
+    pkg: autoconf 
+    state: latest
+  become: yes
+  become_user: root
+
+- name: Install libc-dev
+  apt: 
+    pkg: libc-dev 
+    state: latest
+  become: yes
+  become_user: root
+
+- name: Install pkg-config
+  apt: 
+    pkg: pkg-config 
+    state: latest
+  become: yes
+  become_user: root
+
+- name: Install libmagickwand-dev
+  apt: 
+    pkg: libmagickwand-dev 
+    state: latest
+  become: yes
+  become_user: root
+
+- name: Install PEAR
+  apt: 
+    pkg: php-pear 
+    state: latest
+  become: yes
+  become_user: root
+
+- name: PECL install imagemagick 
+  pear: 
+    name: pecl/imagick 
+    state: present
+  become: yes
+  become_user: root
+  
+# Only run this if we haven't already created this file
+- name: Create configutation file for imagemagick 
+  shell: bash -c "echo extension=imagick.so > /etc/php7.0-sp/conf.d/imagick.ini" creates=/etc/php7.0-sp/conf.d/imagick.ini
+  become: yes
+  become_user: root
+  
+- name: Restart php7.0-fpm-sp
+  service: 
+    name: php7.0-fpm-sp 
+    state: restarted
+  become: yes
+  become_user: root

@@ -1,0 +1,10 @@
+---
+- hosts: "{{ host }}"
+
+  vars:
+    deploy_local_db: "true"
+    import_db: "true"
+    
+  roles:
+    - push-local-db
+

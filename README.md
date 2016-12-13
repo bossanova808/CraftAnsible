@@ -1,27 +1,29 @@
 
 # Ansible Deploy CraftCMS to Cloud VPS 
 
-This is a quick guide & set of example [Ansible](http://www.ansible.com/) playbooks for automated deployment of a CraftCMS installation to a VPS server such as a [Digital Ocean](https://www.digitalocean.com/) 'droplet' or [Vultr](https://www.vultr.com/) VPS.  
+This is a quick guide & set of example [Ansible](http://www.ansible.com/) playbooks for automated deployment of a CraftCMS installation to a VPS server such as a [Digital Ocean](https://www.digitalocean.com/) 'droplet' or [Vultr](https://www.vultr.com/) VPS. 
 
-It's not 100% generalised or ready to use out of the box and will take some tailoring to your needs, but should give you 95%+ of what you need to get going with fully automated deployments.
+It handles pretty much all of the initial server setup, and on-going deployments.  It's not generalised or ready to use out-of-the-box.  It requires some tailoring to your needs, but should give you 95%+ of what you need to get going with fully automated server setup and Craft deployments.
 
 Ansible is a script based industrial strength deployment system.  Basically,  like shell scripting or git hooks but...better.  
 
-Better in the sense that it is **simpler** (Playbooks are written in very human readable YAML) and that it aims to be **idempotent** - playbooks are fully repeatable and made of modular DRY roles. Ansible keeps track of state so you can repeat the playbooks as often as you want/need and it knows what needs to be repeated and what doesn't, basically - which makes ansible **performant** as well.    Also - it generally doesn't require anything extra to be installed on your server.
+**Better** in the sense that it is **simpler** (Playbooks are written in very human readable YAML) and that it aims to be **idempotent** - playbooks are fully repeatable and made of modular DRY roles. Ansible keeps track of state so you can repeat the playbooks as often as you want/need and it knows what needs to be repeated and what doesn't, basically - which makes ansible **performant** as well.   
 
 You string 'roles' together to make a highly modular system that can take you from a bare 'droplet' type server to a fully deployed, secure live server in minutes.  
 
 There's a nice article on why it's...simple and elegant, I guess - here: http://www.ansible.com/blog/simplicity-the-art-of-automation
 
-All it really needs on the server is ssh ('agentless deployment'), although if you want to e.g. import DBs on the server it does need some python modules installed (the install of which can be part of your server setup playbook of course!).
+All it really needs on the server is standard ssh (this is called 'agentless deployment' - although if you want to e.g. import DBs on the server it does need some python modules installed (the install of which can be part of your server setup playbook of course!).
 
-Server Management of the VPS is done by [ServerPilot](https://serverpilot.io/) - they handle the basics of server performance, security, updating and monitoring.
+Server Management of the VPS is, in this example, done by [ServerPilot](https://serverpilot.io/) - they handle the basics of server performance, security, updating and monitoring.  
 
-I currently use Vultr as they have servers in Sydney and you just can't beat those pings.  Even on a $5/month VPS, Craft (with PHP 7) absolutely _flies_.
+For ther servers themselves, you can really use any of the standard providers that can give you a bare, Ubuntu 16.04 VPS, such as Digital Ocean, Vultr, Linode, etc.  I currently use Vultr as they have servers in Sydney and you just can't beat those pings.  Even on a $5/month VPS, Craft (with PHP 7) absolutely _flies_.
 
-I've written this largely for my own benefit, and use it frequently in production myself - even this document is here largely as a self reminder system - but hopefully it's more than enough to help others get started with similar projects.  
+I've written this largely for my own benefit, and use it in production myself - even this document is here largely as a self reminder system - but hopefully it's more than enough to help others get started with similar projects.  
 
-The goal is to go from deploying a new VPS instance to a fully runninng Craft system in less than half an hour.  Meaning if ever there's a major outage on my current VPS provider, I can simply switch to another and run a few simple commands to redeploy everything to a new, bare VPS.
+The goal is to go from deploying a new VPS instance to a fully runninng Craft system in less than half an hour, and to use ansible for all deployment tasks on an ongoing basis (deploying new code, pushing and pull DBs etc).
+
+Apart from ongoing deployments, this is really my disaster recovery plan - that is, if ever there is a major outage on my current VPS provider, I can simply switch to another and run a few simple commands to redeploy everything & restore my db backups to a new, bare VPS and swithc over IPs - wa la, a new production server in less than an hour.  (Hourly db backups to s3 are set up as part of this system!).
 
 ## BASIC STRUCTURE
 
@@ -37,29 +39,29 @@ Next up is:
     production.sh (Run stuff on production)
     staging.sh (you can guess, right?)
 
-Which are very simple scripts that calls `ansible-playbook` to actually run our play books.  It basically just passes arguments through, which most of the time we won't be doing, but here's some examples anyway:
+Which are _very_ simple scripts that calls `ansible-playbook` to actually run our play books.  It basically just passes arguments through, which most of the time we won't be doing, but here's some examples anyway:
 
-    ./production.sh run/setup-server.yaml 
+    ./production.sh play/setup-server.yaml 
 
 ...which automatically sets up a bare Ubuntu VPS to host Craft
 
-    ./staging.sh run/deploy-dev-code.yaml 
+    ./staging.sh play/deploy-dev-code.yaml 
 
-...which deploys current dev code straight from your local dev environment to the staging server
+...which deploys current local develompment code straight from your local dev environment to the staging server.
 
 ### Playbooks
 
-We then have our master playbooks in the `run` folder.  This gives a nice  declarative command line syntax as per the above examples.  
+We then have our master playbooks in the `play` folder.  This gives a nice  declarative command line syntax as per the above examples.  
 
-Each of the playbooks in `run` define a particular thing we want to do, and calls the corresponding role(s) which make those results happen.  Should be pretty much self explanatory, but here are some examples:
+Each of the playbooks in `play` define a particular thing we want to do, and calls the corresponding `role` (or roles) which make those results happen.  Should be pretty much self explanatory, but here are some examples:
 
-    ./staging.sh run/deploy-git.yaml  
+    ./staging.sh play/deploy-git.yaml  
 
-...deploy git HEAD to staging
+...deploys git HEAD to staging
 
-    ./production.sh run/deploy-git.yaml --git_version="v0.0.4" 
+    ./production.sh play/deploy-git.yaml --git_version="v0.0.4" 
 
-....deploy a specific git tag to production
+....deploys a specific git tag to production
 
 ### How to understand what's going to happen in a particular play
 
@@ -69,9 +71,11 @@ Each role has it's own folder under `roles`.
 
 Under there, you will find in each a `tasks` folder with generally just a file called `main.yaml` - these are pretty much human readable task lists.  Just read through each one in order to see what will happen.
 
-There may also be a `files` folder that contains e.g. configuration or credential files that are copied across as part of that role.
+### How to set up for your server
 
-(Obviously, missing from this repository are _actual_ credential files.  You'll need to add your own.  Don't worry, when you're trying this out ansible will give you excellent error messages so you can just add these as you go).
+In the `files` folder you will find configuration & credential files that are copied across as part of that role....you need to change the various `whatever` in there to suit your needs/environment.  (Indeed, you should `grep` this whole repo for `whatever` and change any you find to a sensible value!)
+
+(Obviously, missing from this repository are _actual_ credentials.  You'll need to add your own.  Don't worry, when you're trying this out ansible will give you excellent error messages so you can, if you like, just add these as you go).
 
 ## VPS SERVER SETUP
 
@@ -87,12 +91,9 @@ But for now let's just use the popular Serverpilot +  VPS approach.
 
 On Digital Ocean or Vultr etc, create your new VPS:
 
-For Serverpilot to manage it, the base system **must** be either of:
+For Serverpilot to manage it, the base system **must** be:
 
     Ubuntu 16.04 x64
-    Ubuntu 14.04 x64
-
-(Go modern, go 16!).  
 
 Wait until your shiny new server is deployed and you get an IP address assigned.  This usually takes about a minute. 
 
@@ -177,7 +178,7 @@ Some extra handy server setup stuff is to set up your hostname and configure whe
 
 Now, you're ready to rock and roll with some ansible automation
 
-    ./staging.sh run/setup-server.yaml
+    ./staging.sh play/setup-server.yaml
 
 ..will kick that off (on your host called staging defined in `hosts` in the root of your deployment folder).
 
@@ -271,9 +272,9 @@ Basically there's a module for anything and each is very simple and pretty much 
 
  So, starting from our bare new VPS, to go to a full deployment from our current local code & DB, all we run on our local server is this:
 
-    ./staging.sh run/setup-server.yaml
-    ./staging.sh run/deploy-dev-db.yaml
-    ./staging.sh run/deploy-dev-code.yaml
+    ./staging.sh play/setup-server.yaml
+    ./staging.sh play/deploy-dev-db.yaml
+    ./staging.sh play/deploy-dev-code.yaml
 
 If we want to instead deploy a specific git version, we would change that second line to:
 
@@ -285,8 +286,8 @@ If we want to instead deploy a specific git version, we would change that second
 
 ### Pushing dev code/db to staging for testing
 
-    ./staging.sh run/deploy-dev-code.yaml
-    ./staging.sh run/deploy-dev-db.yaml
+    ./staging.sh play/deploy-dev-code.yaml
+    ./staging.sh play/deploy-dev-db.yaml
    
 ### Doing a hotfix with live production data
 
@@ -305,8 +306,8 @@ In full this:
 And here's the actual process:
 
     git checkout -b hotfix-whatever
-    ./production.sh run/pull-db.yaml
-    ./production.sh run/maintenance-enable.yaml
+    ./production.sh play/pull-db.yaml
+    ./production.sh play/maintenance-enable.yaml
 
 ... Work locally & **Test!**
 
@@ -322,11 +323,11 @@ Them, git merge in your fix & tag a release, something like:
 
 Push the tagged git version to production:
 
-    ./production.sh run/deploy-git --git_version="V1.4.1"
+    ./production.sh play/deploy-git --git_version="V1.4.1"
 
 Push the dev db which is now the production db plus the local changes
 
-    ./production.sh run/deploy-dev-db
+    ./production.sh play/deploy-dev-db
 
 (...this will aslo take your site out of maintenance mode since you pulled the DB just before enabling maintenance mode)
 

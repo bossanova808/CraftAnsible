@@ -1,11 +1,18 @@
-#git clone the script, chmod it, then run it interactively
+---
+# git clone the script, chmod it, then run it interactively
 - name: Get Serverpilot Let's Encrypt Script & get it ready to run
-  get_url: url=https://raw.githubusercontent.com/lesaff/serverpilot-letsencrypt/master/sple.sh dest=/usr/local/bin/sple.sh mode="a+x"
+  get_url: 
+    url: https://raw.githubusercontent.com/lesaff/serverpilot-letsencrypt/master/sple.sh 
+    dest: /usr/local/bin/sple.sh 
+    mode: "a+x"
   become: yes
   become_user: root  
 
 
 - name: cron to gunzip the let's encrypt folder till we solve this issue
-  cron: name="gunzip letsencrypt" minute="*/5" job="gunzip -r /etc/letsencrypt"
+  cron: 
+    name: "gunzip letsencrypt" 
+    minute: "*/5" 
+    job: "gunzip -r /etc/letsencrypt"
   become: yes
   become_user: root
