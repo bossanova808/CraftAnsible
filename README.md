@@ -278,7 +278,7 @@ Basically there's a module for anything and each is very simple and pretty much 
 
 If we want to instead deploy a specific git version, we would change that second line to:
 
-    ./staging.sh deploy-git --git_version="V0.0.4"  # Can use any commit SHA-1 or tag here
+    ./staging.sh deploy-git --extra-vars "git_version=V0.0.4"  # Can use any commit SHA-1 or tag here
 
 (...if we don't specify git_version it will deploy HEAD of course.)
 
@@ -323,7 +323,7 @@ Them, git merge in your fix & tag a release, something like:
 
 Push the tagged git version to production:
 
-    ./production.sh play/deploy-git --git_version="V1.4.1"
+    ./production.sh play/deploy-git --extra-vars "git_version=V1.4.1"
 
 Push the dev db which is now the production db plus the local changes
 
