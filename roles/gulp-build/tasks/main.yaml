@@ -21,9 +21,17 @@
   npm: 
     path: "{{ release_folder }}"
     state: latest
-    production: yes
+
+# Install local gulp
+- name: Install (local) Gulp package
+  npm: 
+   name: gulp
+   state: present
+   version: latest
+   path: "{{ release_folder }}"
+  tags: gulp
 
 # Compile with gulp.
 - name: "Compile the release with Gulp"
-  command: /usr/local/bin/gulp production chdir="{{ release_folder }}"
+  command: gulp production chdir="{{ release_folder }}"
 

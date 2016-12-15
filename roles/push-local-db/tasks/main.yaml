@@ -13,7 +13,7 @@
 - name: "Dump remote DB to backup on remote server {{ db_dump_dir }}/craft-remote-before-push.sql"
   mysql_db: 
     state: dump 
-    name: whatever 
+    name: "{{ db_name }} "
     target: "{{ db_dump_dir }}/craft-remote-before-push.sql"
 
 - name: Push local DB to remote
@@ -35,5 +35,5 @@
   when: deploy_local_db is defined and import_db is defined
 
 # - name: "Import database on server (db from git repo)"
-#   mysql_db: name=whatever state=import target="{{ release_folder }}/dbdump/craft.sql"
+#   mysql_db: name="{{ db_name }} " state=import target="{{ release_folder }}/dbdump/craft.sql"
 #   when: deploy_repo_db is defined and import_db is defined
