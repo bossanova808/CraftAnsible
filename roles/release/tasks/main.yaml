@@ -1,19 +1,20 @@
-# Set Craft folder permissions
+# Set Craft & Public folder permissions
 
-- name: "Set Craft app folder permissions"
+# NB This (deliberately) means we can't run local updates!  Must run and test updates on dev then push out to the server!
+- name: "Set Craft folder & file permissions to u+rwX"
   file: 
-    path: "{{ release_craft_folder }}/app" 
-    mode: 0744
+    path: "{{ release_craft_folder }}" 
+    mode: u=rwX
+    recurse: yes
 
-- name: "Set Craft config folder permissions"  
-  file: 
-    path: "{{ release_craft_folder }}/config" 
-    mode: 0744
+# NB if you are using any local asset sources, this would need to be group writeable in addition.
+# But all my assets sources are on S3
+- name: "Set Public folder & file permissions to -> u=rwX,g=rX,o=rX"
+  file:
+    path: "{{ release_public_folder }}"
+    mode: u=rwX,g=rX,o=rX
+    recurse: yes
 
-- name: "Set Craft storage folder permissions"  
-  file: 
-    path: "{{ release_craft_folder }}/storage" 
-    mode: 0744
 
 # Server Configuration Changes
 

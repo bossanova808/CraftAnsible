@@ -6,7 +6,7 @@
   - setup-install-nodejs-gulp   
   - setup-install-python-mysqldb
   - setup-install-imagemagick
-  - { role: setup-server-backups, when: "'production' not in group_names" }
+  - { role: setup-server-backups, when: "'production' in group_names" }
   - setup-letsencrypt
   - restart-all-services
     
