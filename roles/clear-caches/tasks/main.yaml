@@ -1,0 +1,10 @@
+- name: "Delete storage/runtime/ cache, compiled_templates, state"
+  shell: 
+    rm -rf "{{ craft_dir }}/storage/runtime/cache/*" "{{ craft_dir }}/storage/runtime/compiled_templates/*" "{{ craft_dir }}/storage/runtime/state/*"
+
+- name: "Empty Craft templatecaches table"
+  shell:
+    "mysql -u {{ db_user }} -p{{ db_password }} {{ db_name }} -e \"DELETE FROM craft_templatecaches\""
+
+
+

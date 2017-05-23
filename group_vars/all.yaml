@@ -29,8 +29,3 @@ releases_dir: "{{app_dir}}/releases"
 dbdump_dir: "{{home_dir}}/dbdump"
 
 # (The actual release folders are registered & created as part of the deplo-* roles)
-
-# When deploying dev code, we'll want to exlcude some things (basically what's in our .gitignore)
-# See deploy-dev/tasks/main.yaml - thesse are passed as rsycn options in there
-craft_dir_exculsions: "--exclude=.git --exclude=storage/runtime --exclude=storage/backups"
-public_dir_exclusions: "--exclude=_imager-transforms --exclude=public_html/.well-known"

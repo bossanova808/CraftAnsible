@@ -15,7 +15,10 @@
     recursive: yes 
     src: "../../craft"
     dest: "{{ release_folder }}"
-    rsync_opts: "{{ craft_dir_exculsions }}"
+    rsync_opts:
+        - "--exclude=craft/storage/runtime"
+        - "--exclude=craft/storage/backups"
+
 
 - name: Push current `public_html` to server
   synchronize: 
@@ -24,7 +27,8 @@
     recursive: yes 
     src: "../../public_html"
     dest: "{{ release_folder }}"
-    rsync_opts: "{{ public_dir_exclusions }}"
+    rsync_opts: 
+        - "--exclude=public_html/_your_imager-transforms-folder"
 
 
   
