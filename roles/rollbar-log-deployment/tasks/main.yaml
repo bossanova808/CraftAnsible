@@ -1,0 +1,20 @@
+- name: Get latest git commit hash
+  git:
+    repo: '{{ build_repo_src }}'
+    dest: /dev/null
+    clone: no
+    update: no
+    accept_hostkey: yes 
+  register: gitresult
+  when: "'production' in group_names"
+
+- name: Log deployment to Rollbar
+  uri:
+    url: https://api.rollbar.com/api/1/deploy/
+    method: POST
+    body: "access_token={{ rollbar_api_token }}&environment={{ easy_name }}&revision={{ gitresult.after }}&user=jd"
+    status_code: 200
+    return_content: yes
+    headers:
+      Content-Type: "application/x-www-form-urlencoded"
+  when: "'production' in group_names"

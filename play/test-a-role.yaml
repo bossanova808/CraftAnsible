@@ -1,0 +1,7 @@
+# Edit this to test invidual roles more easily
+---
+- hosts: "{{ host }}"
+
+  roles:
+    - rollbar-log-deployment
+

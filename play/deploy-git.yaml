@@ -14,4 +14,4 @@
     - gulp-build
     - release
     - clean-up
-    
+    - rollbar-log-deployment    

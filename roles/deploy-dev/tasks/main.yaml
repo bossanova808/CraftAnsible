@@ -1,11 +1,15 @@
 ---
 
+############# NOTE EXCLUSIONS MUST USE THE SERVER SIDE PATH BELOW!!!
+
+
 # Deploys your current codebase to a server
 
 # Set Release Folder - 'dev' - to indicate this is current development code
-- include: ../../create-release-folders/tasks/create-release-folders.yaml 
+- include_tasks: ../../create-release-folders/tasks/create-release-folders.yaml 
   vars:
     folder: dev
+        
 
 # This is quick and dirty - just rsync up all the compiled code...
 - name: Push current `craft` to server
@@ -19,7 +23,6 @@
         - "--exclude=craft/storage/runtime"
         - "--exclude=craft/storage/backups"
 
-
 - name: Push current `public_html` to server
   synchronize: 
     mode: push 
@@ -29,6 +32,5 @@
     dest: "{{ release_folder }}"
     rsync_opts: 
         - "--exclude=public_html/_your_imager-transforms-folder"
-
 
   

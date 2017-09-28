@@ -51,7 +51,6 @@
     state: link
   when: "'production' not in group_names"
 
-
 # SWITCH IN THE RELEASE
 #######################
 
@@ -68,7 +67,14 @@
     dest: "{{ public_dir }}"
     state: link
   
-
+# PRODUCTION ONLY PLUGINS NEED TO BE LINKED IN
+###############################################
+- name: Link Rollbar plugin only in production
+  file: 
+    src: "{{craft_dir}}/production-only-plugins/rollbar"
+    dest: "{{craft_dir}}/plugins/rollbar"
+    state: link
+  when: "'production' in group_names"
 
 
 

@@ -1,7 +1,7 @@
 ---
 
 # Set Release Folder - 'dev' - to indicate this is current development code
-- include: ../../create-release-folders/tasks/create-release-folders.yaml 
+- include_tasks: ../../create-release-folders/tasks/create-release-folders.yaml 
   vars:
     folder: git-deploy
 

@@ -1,6 +1,6 @@
 
 # Set Release Folder - 'dev' - to indicate this is current development code
-- include: ../../create-release-folders/tasks/create-release-folders.yaml 
+- include_tasks: ../../create-release-folders/tasks/create-release-folders.yaml 
   vars:
     folder: dev
 
@@ -10,11 +10,11 @@
     name=craft 
     target="{{ local_db_dump_dir }}/craft-dev.sql"
 
-- name: "Dump remote DB to backup on remote server {{ db_dump_dir }}/craft-remote-before-push.sql"
+- name: "Dump remote DB to backup on remote server {{ db_dump_dir }}/craft-{{ easy_name }}-before-push.sql"
   mysql_db: 
     state: dump 
-    name: "{{ db_name }} "
-    target: "{{ db_dump_dir }}/craft-remote-before-push.sql"
+    name: "{{ db_name }}"
+    target: "{{ db_dump_dir }}/craft-{{ easy_name }}-before-push.sql"
 
 - name: Push local DB to remote
   synchronize: 
